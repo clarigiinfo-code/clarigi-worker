@@ -1,0 +1,13 @@
+name = "c"
+main = "./src/index.js"
+compatibility_date = "2026-09-15"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true
+html_handling = "none"
+
+[[kv_namespaces]]
+binding = "REPORTS_KV"
+id = "PASTE_YOUR_EXISTING_REPORTS_KV_NAMESPACE_ID_HERE"
