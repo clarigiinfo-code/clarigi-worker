@@ -1178,7 +1178,8 @@ document.getElementById("siteUrl").addEventListener("keydown", (e) => {
    ============================================================ */
 (async function checkForSharedReport(){
   const params = new URLSearchParams(window.location.search);
-  const id = params.get("report");
+  const pathMatch = window.location.pathname.match(/^\/r\/([^\/]+)\/?$/);
+  const id = params.get("report") || (pathMatch ? pathMatch[1] : null);
   if(!id) return;
   try{
     const res = await fetch(WORKER_URL + "/report?id=" + encodeURIComponent(id));
