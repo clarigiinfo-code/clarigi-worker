@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarigi — Free External Growth Diagnostic</title>
+<style>
+  :root{
+    --vista:#8FA0D8;
+    --bridal:#E9F3FF;
+    --midnight:#0B1957;
+    --midnight-70:rgba(11,25,87,0.7);
+    --midnight-40:rgba(11,25,87,0.4);
+    --midnight-12:rgba(11,25,87,0.12);
+    --white:#FFFFFF;
+    --good:#2E7D5B;
+    --good-bg:#eef7f0;
+    --bad:#B5424A;
+    --bad-bg:#fdecec;
+    --warn:#9a5b00;
+    --warn-bg:#fff4e6;
+    --curio:#6C5CE7;
+    --curio-bg:#f3f1ff;
+    --shadow: 0 12px 32px rgba(11,25,87,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bridal);
+    color: var(--midnight);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:56px 0 44px; text-align:center;
+    background: linear-gradient(180deg, var(--bridal) 0%, #dfeeff 100%);
+    border-bottom:1px solid var(--midnight-12);
+  }
+  .eyebrow{
+    display:inline-block; background: var(--white); border:1px solid var(--vista);
+    color:var(--midnight); font-size:12px; font-weight:bold; letter-spacing:1px;
+    text-transform:uppercase; padding:6px 14px; border-radius:20px; margin-bottom:18px;
+  }
+  h1.hero-title{ font-size:36px; line-height:1.25; margin:0 0 14px; color:var(--midnight); font-weight:bold; }
+  .hero-sub{ font-size:16px; color:var(--midnight-70); max-width:600px; margin:0 auto 30px; line-height:1.55; }
+  .search-row{ display:flex; max-width:560px; margin:0 auto; gap:10px; flex-wrap:wrap; justify-content:center; }
+  input#siteUrl{
+    flex:1 1 320px; padding:15px 18px; border-radius:8px; border:2px solid var(--midnight-12);
+    font-size:15px; font-family:Arial, sans-serif; outline:none; background:var(--white); color:var(--midnight);
+  }
+  input#siteUrl:focus{border-color:var(--vista);}
+  button.primary{
+    padding:15px 26px; border-radius:8px; border:none; background:var(--midnight); color:var(--white);
+    font-size:15px; font-weight:bold; cursor:pointer; font-family:Arial, sans-serif;
+    transition:transform .12s ease, background .12s ease;
+  }
+  button.primary:hover{background:#152368;}
+  button.primary:active{transform:scale(0.98);}
+  button.primary:disabled{opacity:0.6;cursor:default;}
+  .hint{font-size:12.5px;color:var(--midnight-40);margin-top:12px;}
+
+  /* Methodology flow (static, trust-building) */
+  .method-flow{
+    display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+    gap:0; max-width:820px; margin:34px auto 0;
+  }
+  .method-step{
+    background:var(--white); border:1px solid var(--midnight-12); border-radius:10px;
+    padding:9px 14px; font-size:11.5px; font-weight:bold; color:var(--midnight);
+    display:flex; align-items:center; gap:6px; white-space:nowrap;
+  }
+  .method-step .ms-dot{width:7px;height:7px;border-radius:50%;background:var(--vista);display:inline-block;}
+  .method-arrow{color:var(--vista);font-size:16px;padding:0 8px;font-weight:bold;}
+  .method-caption{font-size:11.5px;color:var(--midnight-40);margin-top:10px;}
+
+  /* ---------- Status / loading ---------- */
+  .status-panel{ max-width:560px;margin:26px auto 0;padding:0 4px; display:none; }
+  .status-panel.show{display:block;}
+  .loadbar{ height:6px;width:100%;border-radius:6px; background:var(--midnight-12);overflow:hidden; }
+  .loadbar .fill{ height:100%;width:30%; background:var(--vista); animation: slide 1.1s ease-in-out infinite; }
+  @keyframes slide{ 0%{transform:translateX(-100%);} 100%{transform:translateX(400%);} }
+  .status-text{font-size:13px;color:var(--midnight-70);margin-top:10px;text-align:center;}
+  .error-box{
+    max-width:560px;margin:20px auto 0; background:var(--bad-bg);border:1px solid var(--bad);color:var(--bad);
+    padding:14px 16px;border-radius:8px;font-size:13.5px;display:none;
+  }
+  .error-box.show{display:block;}
+
+  /* ---------- Results section ---------- */
+  section#results{display:none;padding:52px 0 20px;}
+  section#results.show{display:block;}
+  .result-header{text-align:center;margin-bottom:8px;}
+  .result-header .brand-pill{
+    display:inline-block;background:var(--midnight);color:var(--white);
+    padding:5px 14px;border-radius:20px;font-size:12.5px;font-weight:bold;margin-bottom:14px;
+  }
+  .result-header .cat-line{font-size:12.5px;color:var(--midnight-70);margin:0 0 14px;}
+  .result-header h2{font-size:25px;margin:0 0 8px;line-height:1.3;}
+  .result-header p{color:var(--midnight-70);font-size:14px;margin:0 auto;max-width:640px;line-height:1.55;}
+  .ref-note{
+    text-align:center;font-size:12px;color:var(--midnight-40);max-width:560px;margin:14px auto 30px;line-height:1.5;
+  }
+
+  /* Reference links */
+  .ref-link{
+    display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:bold;
+    color:var(--midnight); text-decoration:none; border-bottom:1px dashed var(--vista);
+    margin-top:6px;
+  }
+  .ref-link:hover{color:#152368;}
+
+  /* Diagram wrapper */
+  .diagram-wrap{ margin:16px 0 20px; text-align:center; }
+  .diagram-wrap svg{ max-width:100%; max-height:280px; height:auto; }
+  /* Venn diagram is square-ish (not wide like the other diagrams), so it
+     gets its own width cap to stop the circles rendering oversized on
+     wide/desktop screens. */
+  .diagram-wrap--compact{ max-width:340px; margin-left:auto; margin-right:auto; }
+  .diagram-caption{font-size:11.5px;color:var(--midnight-70);margin-top:6px;}
+
+  /* Priority pyramid */
+  .priority-pyramid-wrap{margin:20px 0 6px;text-align:center;}
+  .priority-pyramid-wrap svg{max-width:100%;height:auto;}
+
+  /* Priority banner */
+  .priority-banner{
+    background: linear-gradient(135deg, var(--midnight) 0%, #16226e 100%);
+    border-radius:14px; padding:30px 28px; color:var(--white); margin-bottom:28px;
+  }
+  .priority-banner .ptag{
+    display:inline-block;background:var(--vista);color:var(--midnight);font-weight:bold;
+    font-size:11px;letter-spacing:0.5px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:12px;
+  }
+  .priority-banner h3{font-size:20px;margin:0 0 10px;color:var(--white);line-height:1.35;}
+  .priority-banner p{font-size:14px;color:var(--bridal);opacity:0.92;line-height:1.6;margin:0 0 14px;}
+  .priority-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
+  @media (max-width:640px){.priority-grid{grid-template-columns:1fr;}}
+  .priority-sub{
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+    border-radius:10px; padding:14px 16px;
+  }
+  .priority-sub h5{margin:0 0 6px;font-size:11.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--vista);}
+  .priority-sub p{margin:0;font-size:13.5px;color:var(--white);opacity:0.95;line-height:1.55;}
+
+  /* Auditor cards */
+  .card{
+    background:var(--white); border-radius:14px; box-shadow: var(--shadow);
+    padding:28px 26px; margin-bottom:24px; border:1px solid var(--midnight-12);
+  }
+  .auditor-head{ display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:6px; }
+  .auditor-head h3{ margin:0;font-size:18px;color:var(--midnight); }
+  .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .level-badge, .confidence-badge, .status-badge{
+    font-size:11px;font-weight:bold;padding:4px 10px;border-radius:12px;letter-spacing:0.3px;text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .level-LOW{background:var(--good-bg);color:var(--good);}
+  .level-MODERATE{background:var(--warn-bg);color:var(--warn);}
+  .level-HIGH{background:var(--bad-bg);color:var(--bad);}
+  .level-STRONG{background:var(--good-bg);color:var(--good);}
+  .confidence-badge{background:var(--bridal);color:var(--midnight);border:1px solid var(--vista);}
+  .status-badge{background:var(--midnight-12);color:var(--midnight-70);}
+  .card .card-sub{font-size:13px;color:var(--midnight-70);margin:6px 0 4px;}
+  .strongest-line{
+    font-size:14.5px;color:var(--midnight);background:var(--bridal);border-left:3px solid var(--vista);
+    padding:10px 14px;border-radius:6px;margin-bottom:20px;line-height:1.55;
+  }
+  .strongest-line strong{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--midnight-70);margin-bottom:3px;}
+
+  /* Finding blocks */
+  .finding{ border:1px solid var(--midnight-12); border-radius:10px; padding:18px 18px 16px; margin-bottom:14px; }
+  .finding:last-child{margin-bottom:0;}
+  .finding-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+  .finding-top h4{margin:0;font-size:15px;color:var(--midnight);}
+  .sev-badge{font-size:10.5px;font-weight:bold;padding:3px 9px;border-radius:10px;text-transform:uppercase;background:var(--midnight-12);color:var(--midnight-70);white-space:nowrap;}
+  .finding p.what{font-size:13.5px;line-height:1.6;color:var(--midnight);margin:0 0 12px;}
+  .ev-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--vista);font-weight:bold;margin:0 0 6px;}
+  .ev-item{ background:var(--bridal); border-radius:6px; padding:9px 12px; margin-bottom:6px; font-size:13px; line-height:1.55; }
+  .ev-item:last-child{margin-bottom:0;}
+  .ev-meta{display:block;font-size:11px;color:var(--midnight-70);margin-top:3px;}
+  .why-box{font-size:13.5px;line-height:1.6;color:var(--midnight);margin:12px 0;}
+  .why-box strong{color:var(--midnight-70);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:4px;}
+  .fix-box{
+    background:var(--good-bg);border-left:3px solid var(--good); padding:10px 14px;border-radius:6px;
+    font-size:13.5px;color:#1c5238;margin-top:10px;line-height:1.55;
+  }
+  .fix-box strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--good);margin-bottom:3px;}
+  .unknown-box{
+    background:#f3f2ef;border-left:3px solid var(--midnight-40); padding:10px 14px;border-radius:6px;
+    font-size:12.5px;color:var(--midnight-70);margin-top:10px;line-height:1.55;font-style:italic;
+  }
+  .unknown-box strong{display:block;font-style:normal;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--midnight-40);margin-bottom:3px;}
+  .priority-finding-tag{
+    display:inline-block;margin-top:14px;font-size:12px;font-weight:bold;color:var(--midnight);
+    background:var(--vista);padding:5px 12px;border-radius:8px;
+  }
+  .not-applicable{
+    background:var(--bridal);border-radius:10px;padding:16px 18px;font-size:13.5px;color:var(--midnight-70);line-height:1.6;
+  }
+
+  /* Masked-insight / curiosity box */
+  .masked-box{
+    margin-top:18px; background:var(--curio-bg); border:1px dashed var(--curio); border-radius:10px;
+    padding:14px 16px; display:flex; gap:12px; align-items:flex-start;
+  }
+  .masked-box .mi-icon{font-size:17px;line-height:1;flex-shrink:0;}
+  .masked-box .mi-body{flex:1;}
+  .masked-box .mi-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--curio);font-weight:bold;margin-bottom:5px;}
+  .masked-box p{margin:0;font-size:13px;line-height:1.6;color:var(--midnight);}
+  .mi-cta{
+    display:inline-block;margin-top:9px;font-size:12.5px;font-weight:bold;color:var(--curio);
+    text-decoration:none;border-bottom:1px solid var(--curio);cursor:pointer;background:none;
+    font-family:Arial, sans-serif;
+  }
+
+  /* Purchase decision questions */
+  .question-row{border:1px solid var(--midnight-12);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+  .question-row:last-child{margin-bottom:0;}
+  .q-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+  .q-top h5{margin:0;font-size:14px;color:var(--midnight);}
+  .assess-badge{font-size:10.5px;font-weight:bold;padding:3px 10px;border-radius:10px;text-transform:uppercase;white-space:nowrap;}
+  .assess-CLEAR{background:var(--good-bg);color:var(--good);}
+  .assess-PARTLY_CLEAR{background:var(--warn-bg);color:var(--warn);}
+  .assess-UNCLEAR{background:var(--bad-bg);color:var(--bad);}
+  .q-detail{font-size:12.5px;line-height:1.6;color:var(--midnight-70);margin:4px 0;}
+  .q-detail strong{color:var(--midnight);}
+
+  .biggest-friction{
+    margin-top:18px; background:var(--bad-bg); border:1px solid var(--bad); border-radius:10px; padding:18px;
+  }
+  .biggest-friction h4{margin:0 0 10px;font-size:14.5px;color:var(--bad);}
+  .biggest-friction .bf-row{font-size:13px;line-height:1.6;color:var(--midnight);margin-bottom:8px;}
+  .biggest-friction .bf-row strong{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--bad);margin-bottom:2px;}
+
+  /* Simple list group (AI discovery) */
+  .list-group{margin-bottom:16px;}
+  .list-group h5{font-size:11.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--vista);font-weight:bold;margin:0 0 8px;}
+  .lg-item{ background:var(--bridal); border-radius:6px; padding:9px 12px; margin-bottom:6px; font-size:13px; line-height:1.55; }
+  .lg-item:last-child{margin-bottom:0;}
+
+  /* Overall + CTA */
+  .overall-card{ background:var(--white); border:2px solid var(--midnight); border-radius:14px; padding:26px; margin-bottom:24px; }
+  .overall-card h3{margin:0 0 14px;font-size:17px;}
+  .overall-row{font-size:13.5px;line-height:1.6;color:var(--midnight);margin-bottom:12px;}
+  .overall-row strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--midnight-70);margin-bottom:3px;}
+
+  /* ---------- CTA section (redesigned) ---------- */
+  .cta-section{
+    position:relative; background:linear-gradient(135deg, var(--midnight) 0%, #16226e 100%);
+    border-radius:18px; padding:44px 30px; color:var(--white); overflow:hidden; margin-top:10px;
+  }
+  .cta-section::before{
+    content:""; position:absolute; inset:0;
+    background: repeating-linear-gradient(115deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 26px);
+  }
+  .cta-inner{position:relative;z-index:1;}
+  .cta-head{text-align:center;max-width:560px;margin:0 auto 30px;}
+  .cta-head .eyebrow{background:rgba(255,255,255,0.1);border-color:var(--vista);color:var(--white);}
+  .cta-head h2{font-size:23px;margin:10px 0 10px;color:var(--white);line-height:1.35;}
+  .cta-head p{font-size:14px;color:var(--bridal);opacity:0.9;line-height:1.6;margin:0;}
+
+  .cta-steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:820px;margin:0 auto 30px;
+  }
+  @media (max-width:700px){.cta-steps{grid-template-columns:1fr;}}
+  .cta-step{
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.14); border-radius:12px;
+    padding:18px 16px; text-align:center;
+  }
+  .cta-step .cs-num{
+    width:30px;height:30px;border-radius:50%;background:var(--vista);color:var(--midnight);
+    font-weight:bold;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;
+  }
+  .cta-step h4{margin:0 0 6px;font-size:13.5px;color:var(--white);}
+  .cta-step p{margin:0;font-size:12px;color:var(--bridal);opacity:0.85;line-height:1.5;}
+
+  .cta-questions{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:760px;margin:0 auto 30px;
+  }
+  .cta-chip{
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:var(--white);
+    font-size:12px; padding:8px 14px; border-radius:20px; line-height:1.4;
+  }
+  .cta-chip .chip-mark{color:var(--vista);font-weight:bold;margin-right:5px;}
+
+  .cta-button-row{text-align:center;}
+  .btn-teaser{
+    display:inline-block;background:var(--vista);color:var(--midnight); font-weight:bold;
+    padding:16px 32px;border-radius:9px;text-decoration:none;font-size:15px; transition:transform .12s ease;
+  }
+  .btn-teaser:hover{transform:translateY(-1px);}
+  .cta-fine{font-size:11.5px;color:var(--bridal);opacity:0.65;margin-top:12px;}
+
+  footer.foot{ background:var(--midnight); color:var(--bridal); opacity:0.85; text-align:center; padding:22px 0; font-size:12.5px; margin-top:40px; }
+
+  /* ---- PASTE 1: toolbar & pdf-safe styles ---- */
+  .report-toolbar{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    padding:10px 16px;
+    background: rgba(233,243,255,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--midnight-12);
+    margin: -20px -24px 20px;
+  }
+  .toolbar-btn{
+    display:flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:10px;
+    background:var(--white); border:1px solid var(--midnight-12);
+    cursor:pointer; transition:background .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .toolbar-btn:hover{ background:var(--bridal); border-color:var(--vista); }
+  .toolbar-btn:active{ transform:scale(0.95); }
+  .toolbar-btn svg{ width:19px; height:19px; stroke:var(--midnight); fill:none; stroke-width:1.8; }
+  .pdf-page-safe{
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* ============================================================
+     PRINT / PDF EXPORT
+     Native browser print (window.print → "Save as PDF") replaces
+     canvas screenshotting. This stylesheet is what actually gets
+     paginated, by the browser's real layout engine — so page breaks,
+     widths and scaling are correct on every device automatically,
+     with no guessed pixel widths and no rasterization artifacts.
+     `.pdf-print-mode` is toggled on <body> for the split second the
+     print dialog is open, so on-screen behaviour is untouched.
+     ============================================================ */
+  @media print{
+    .report-toolbar,
+    .hero,
+    footer.foot{ display:none !important; }
+    body{ background:#FFFFFF; }
+    section#results{ display:block !important; padding:0; }
+    .wrap{ max-width:100%; padding:0 8mm; }
+    .card, .priority-banner, .overall-card, .finding, .cta-section{
+      break-inside: avoid;
+      page-break-inside: avoid;
+      box-shadow:none;
+    }
+    .diagram-wrap svg{ max-height:70mm; }
+    a.ref-link{ text-decoration:none; }
+  }
+  /* Fallback for browsers that only respect a manually toggled class
+     (some in-app/mobile webviews don't fully honour @media print on
+     dynamically-shown sections) */
+  body.pdf-print-mode .report-toolbar,
+  body.pdf-print-mode .hero,
+  body.pdf-print-mode footer.foot{ display:none !important; }
+  body.pdf-print-mode section#results{ display:block !important; }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Free external growth diagnostic</span>
+    <h1 class="hero-title" id="heroTitle">Your website already reveals where<br>customers hesitate. Let's read it.</h1>
+    <p class="hero-sub">Enter your site. We'll run an outside-in read across return &amp; margin risk, purchase decision clarity, and AI/search discoverability — with evidence you can check yourself.</p>
+    <div class="search-row">
+      <input type="text" id="siteUrl" placeholder="yourbrand.com" autocomplete="off">
+      <button class="primary" id="analyzeBtn" onclick="runAnalysis()">Run my diagnostic</button>
+    </div>
+    <div class="hint">No signup. Uses only publicly observable information. Takes about 20–40 seconds.</div>
+
+    <div class="method-flow">
+      <div class="method-step"><span class="ms-dot"></span>Observation</div><span class="method-arrow">→</span>
+      <div class="method-step"><span class="ms-dot"></span>Evidence</div><span class="method-arrow">→</span>
+      <div class="method-step"><span class="ms-dot"></span>Interpretation</div><span class="method-arrow">→</span>
+      <div class="method-step"><span class="ms-dot"></span>Business impact</div><span class="method-arrow">→</span>
+      <div class="method-step"><span class="ms-dot"></span>Unknown (flagged, not guessed)</div>
+    </div>
+    <div class="method-caption">This is the exact chain every finding below has to pass before it's shown to you.</div>
+
+    <div class="status-panel" id="statusPanel">
+      <div class="loadbar"><div class="fill"></div></div>
+      <div class="status-text" id="statusText">Reading your homepage and product pages…</div>
+    </div>
+    <div class="error-box" id="errorBox"></div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+
+    <!-- PASTE 2: sticky toolbar replaces old button row -->
+    <div class="report-toolbar">
+      <button class="toolbar-btn" onclick="downloadPdf()" title="Download as PDF" aria-label="Download as PDF">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 19h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="toolbar-btn" onclick="shareReport()" title="Get shareable link" aria-label="Get shareable link">
+        <svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8.1 10.8l7.8-4.4M8.1 13.2l7.8 4.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="result-header">
+      <div class="brand-pill" id="brandPill">yourbrand.com</div>
+      <p class="cat-line" id="catLine"></p>
+      <h2 id="headline"></h2>
+      <p id="subheadline"></p>
+    </div>
+    <p class="ref-note">🔗 icons link to the page where you can verify each finding yourself. References are our best read of where to look — always worth confirming directly on your site.</p>
+
+    <div class="priority-pyramid-wrap" id="priorityPyramidWrap"></div>
+
+    <div class="priority-banner pdf-page-safe" id="priorityBanner" style="display:none;">
+      <span class="ptag" id="priorityArea">Priority area</span>
+      <h3 id="priorityStatement"></h3>
+      <div class="priority-grid" id="priorityGrid"></div>
+    </div>
+
+    <div id="auditorCards"></div>
+
+    <div class="overall-card pdf-page-safe" id="overallCard" style="display:none;"></div>
+
+    <section id="cta" class="cta-section">
+      <div class="cta-inner">
+        <div class="cta-head">
+          <span class="eyebrow">Free 20-minute call</span>
+          <h2 id="ctaHeadline">There may be more behind this than the website shows.</h2>
+          <p id="ctaBody"></p>
+        </div>
+        <div class="cta-steps">
+          <div class="cta-step"><div class="cs-num">1</div><h4>We validate</h4><p>Check each external signal against what's actually happening in your funnel and ops.</p></div>
+          <div class="cta-step"><div class="cs-num">2</div><h4>We quantify</h4><p>Turn a structural risk into an actual number — using your data, not assumptions.</p></div>
+          <div class="cta-step"><div class="cs-num">3</div><h4>We prioritize</h4><p>Leave with a ranked list of what to fix first, and why it's worth doing first.</p></div>
+        </div>
+        <div class="cta-questions" id="ctaQuestions"></div>
+        <div class="cta-button-row">
+          <a class="btn-teaser" id="ctaButton" href="https://www.clarigi.com/contactus" target="_blank" rel="noopener">Get a free expert growth diagnostic &rarr;</a>
+          <div class="cta-fine">No pitch deck. Just your findings, validated against your real numbers.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">Clarigi — this diagnostic uses only publicly observable information and does not access your internal data.</div>
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG — points at your Cloudflare Worker, which holds the
+   Gemini key server-side (never expose API keys client-side)
+   ============================================================ */
+const WORKER_URL = "https://c.clarigi-info.workers.dev";
+
+/* ============================================================
+   MASTER INSTRUCTION — builds the full diagnostic prompt
+   (still used as documentation of what the worker asks Gemini;
+   the actual prompt now lives server-side in the Worker)
+   ============================================================ */
+function buildPrompt(siteUrl){
+  return `
+You are the analysis engine behind Clarigi's Free External Growth Diagnostic.
+
+Clarigi is a business growth consultancy. The diagnostic gives a business owner a useful, specific outside-in view of their business using publicly observable information.
+
+The business website URL provided is: ${siteUrl}
+
+Your job is NOT to produce a generic website audit. Your job is to identify a small number of specific, commercially meaningful issues that can be observed or reasonably inferred from the outside, explain exactly what was found, show the evidence, explain why it matters, and clearly distinguish what can and cannot be known without the company's internal data.
+
+The output must make the founder think: "This is specific to my business. I can see exactly what they found. I understand why it matters. I now want to know what is happening inside the business."
+
+Do not manufacture problems to make the diagnostic look impressive. Do not intentionally withhold or water down an obvious finding to create sales pressure — the free diagnostic must be genuinely useful on its own. Accuracy and credibility are more important than the number of findings.
+
+CORE PRINCIPLE — follow this hierarchy for every conclusion:
+OBSERVATION → EVIDENCE → INTERPRETATION → BUSINESS IMPLICATION → UNKNOWN
+Never skip directly from a website characteristic to a claim about revenue, conversion rate, RTO rate, CAC, profit, or customer behaviour unless that information is actually available from a reliable public source.
+
+The diagnostic is EXTERNAL. It can identify: observable weaknesses, structural risks, customer-facing friction, missing information, inconsistencies, opportunities, credible hypotheses.
+It cannot pretend to know: actual conversion rate, actual CAC, actual ROAS, actual MER, actual RTO percentage, actual repeat purchase rate, actual contribution margin, actual revenue lost, actual payment failure rate, actual customer behaviour, internal operational performance. Mark these UNKNOWN explicitly when relevant.
+
+PHASE 1 — UNDERSTAND THE BUSINESS FIRST. Before any auditor analysis, establish: brand name, business category, primary products/services, major product types, approximate price positioning where observable, apparent target customer, apparent customer use case, business model, purchase model, whether products are physical or digital, whether COD appears relevant, whether sizing/fit appears relevant, whether returns are commercially relevant, whether AI/product discovery analysis is relevant. Do not invent information; if uncertain, mark "uncertain."
+
+PHASE 2 — DETERMINE WHICH AUDITORS APPLY. There are three auditors:
+
+AUDITOR 1 — Return & Margin Risk. Apply when the business sells physical products where returns, failed deliveries, COD, sizing, fit, product damage, or reverse logistics can materially affect economics (apparel, footwear, fashion, lifestyle, furniture, large goods, etc). Do NOT apply fashion-specific sizing analysis where sizing is irrelevant. Do NOT assume RTO is a major problem merely because the company sells physical products. If not materially relevant, mark status NOT_APPLICABLE with one concise reason instead of forcing findings.
+Check: COD (offered/prominent/restrictions/charges disclosed/prepaid incentives), sizing/fit (size guide existence, accessibility, actual measurements, how-to-measure, fit guidance, model measurements — do not call an image-based size guide "poor" simply because it's an image; assess usefulness), return/exchange clarity (window, policy, refund conditions, size-exchange process, shipping responsibility, exclusions, findability before purchase), and product-specific risk factors genuinely relevant to this business (fit/size dependence, appearance expectations, fragility, bulk, shipping cost, customization, perishability).
+Output per major finding: title, severity, what_we_found, evidence[] (observation, location, evidence_type DIRECT/TECHNICAL/EXTERNAL/INFERENCE, confidence, reference_url, reference_label), why_it_matters, specific_fix (concrete enough to hand to a team, never "improve UX"), what_we_cannot_know. Max 3 findings. Identify one priority_finding. Also give one "masked_insight": a single honest sentence naming the unresolved business question this risk raises (e.g. whether it is already showing up in the numbers) — framed as a question worth validating internally, never a fabricated number.
+
+AUDITOR 2 — Purchase Decision Check (primary general-purpose auditor). Answer: can a prospective customer make a confident decision to buy from this website? This is about decision clarity, not visual design — do not focus on typography/colours/animations unless they interfere with the decision. Assess against the six customer questions: (1) What is this? (2) Is this for me? (3) Why should I choose this? (4) Can I believe it? (only count evidence actually present — reviews, testimonials, proof, demonstrations, certifications, ingredients/materials, customer results, third-party validation, transparent business info) (5) Is it worth the price? (benefits, differentiation, quality, proof, quantity, durability, performance, value context — only factors relevant to this business) (6) What happens if I don't like it? (returns, exchanges, refunds, cancellation, warranty, support, delivery expectations where relevant).
+For each question: identify what the site communicates, identify the relevant evidence, mark CLEAR/PARTLY_CLEAR/UNCLEAR, identify the specific gap if not clear, give a concrete fix, and include reference_url/reference_label pointing to the page most likely to contain (or be missing) this information. Do not assume "unclear" means lost conversions — say the customer has less information/confidence than they could have.
+Then identify the single biggest decision friction: which ONE unanswered or weakly answered question creates the largest potential obstacle to purchase. Provide: title, what_customer_sees, what_is_missing, specific_fix (the exact content/UX change, not a full rewrite), reference_url, reference_label. Also give one "masked_insight" naming the unresolved question this friction raises for their actual conversion funnel.
+
+AUDITOR 3 — AI Discovery Check. Apply when the business's products/services/brand could reasonably be discovered through search engines, AI search, or recommendation systems. Do NOT claim a brand is "invisible to AI" simply because one technical element is missing — technical findings are evidence of a potential weakness, not proof of lost AI traffic.
+Check three layers: (1) Brand understanding — can a search/AI system determine what the company is, category, what it sells, who it serves, where it operates, what makes it different. (2) Product/service understanding — name, description, category, attributes, ingredients/materials, price, availability, variants, reviews, usage, intended customer, specs (or service equivalents). (3) Machine-readable structure — Schema.org, Product schema, Organization schema, breadcrumb schema, structured pricing/availability/reviews, semantic HTML, consistent entity info. Do not treat Schema.org as the entire assessment.
+Where external research is available, look for third-party mentions, editorial mentions, reviews, category associations, consistent brand descriptions, authoritative references — do not fabricate results, do not claim absence from AI systems unless actually tested, do not use model memory as evidence of current search visibility, and clearly distinguish external research from on-site observations.
+Each item in brand_understanding, product_understanding, technical_findings, external_footprint_findings and specific_fixes must be an object: {"text": "...", "reference_label": "...", "reference_url": "..."} — reference_url should be the most likely real relative path on the domain (e.g. "/", "/pages/size-guide"), or leave reference_url empty and reference_label as "Inference — not a direct citation" when it is not a direct on-site observation.
+Output: discovery readiness LOW/MODERATE/STRONG, confidence, strongest finding, what search/AI can understand (list), what is weak or missing (list), 1-3 exact fixes (specific data/structure/inconsistency to fix, never "improve SEO"), what we cannot know (requires actual visibility testing/analytics/internal data). Also give one "masked_insight" naming the unresolved question about actual AI/search traffic this raises.
+
+REFERENCES — every DIRECT or TECHNICAL evidence item should carry a best-guess reference_url (a real, plausible relative path on the given domain following common site conventions) and a short reference_label describing what the reader will find there, so they can verify the claim themselves. For INFERENCE or EXTERNAL evidence types, it is fine to leave reference_url empty and explain in reference_label that it is inferred/external rather than a direct citation. Never invent a fake specific URL path with unwarranted confidence — if genuinely unsure, use "/" (homepage) or leave it empty.
+
+EVIDENCE RULES (all auditors): every important finding needs evidence — DIRECT (observable on the site), TECHNICAL (programmatically detectable), EXTERNAL (public sources, cite if possible), or INFERENCE (label it as such). Never invent revenue, conversion rates, CAC, ROAS, RTO rates, customer numbers, traffic, margins, repeat purchase rates, market share, competitor performance, customer sentiment, technical implementation details, payment failures, or AI rankings — if unverifiable, say "Not externally observable." A general industry statistic must never be presented as proof this specific company has the same problem — industry evidence can explain why an issue matters, not that it exists here.
+
+FINDING SELECTION — prioritize business significance, evidence strength, specificity, actionability, and relevance. Prefer one highly specific well-supported finding over five generic ones. Max 3 major findings per auditor, each with a corresponding concrete, specific fix (identify what to change, where, and why — never "improve trust" or "improve conversion" as standalone advice).
+
+PRIORITIZATION — after all three auditors, identify THE ONE THING WE WOULD FIX FIRST based on business impact, evidence strength, urgency, and ease of action. Do not default to the most technically sophisticated or novel-sounding issue. If nothing clearly dominates, say so plainly.
+
+LANGUAGE — write like a senior consultant speaking directly to a founder: direct, specific, commercially aware, neutral, evidence-led, concise. Avoid exaggerated language ("catastrophic", "disastrous", "guaranteed", "definitely losing", "your business is broken", "leaving millions on the table") unless evidence genuinely supports it. Create urgency through specificity and consequence, not fear.
+
+FINAL CTA — do not say "book a call because there's more we found." Instead create legitimate curiosity from the actual boundary of external analysis: we found specific external signals; some may have meaningful business impact; the website alone can't show how large that impact is; Clarigi's experts can validate external findings against actual growth data; the call is free; the goal is to determine what's actually holding the business back and what to fix first. Never claim the deeper problem definitely exists — invite validation, don't assert it.
+
+Before finalizing, silently verify: findings are tied to concrete evidence; observation is distinguished from inference; no invented internal metrics; no claim that a weakness definitely caused financial loss; RTO analysis only applied when relevant; exact website elements identified; fixes are specific enough to implement; the biggest finding is genuinely the strongest; a founder would recognize this as specific to their business; what cannot be known externally is clearly stated; output is concise enough to scan visually; reference_url/reference_label are present wherever a direct claim is made; the CTA follows naturally from the unresolved business question.
+
+Return ONLY valid JSON (no markdown, no code fences, no commentary outside the JSON), matching exactly this shape:
+
+{
+  "business": {"name": "", "category": "", "business_model": "", "primary_offer": "", "target_customer": "", "confidence": "HIGH/MEDIUM/LOW"},
+  "diagnostic_summary": {"headline": "", "subheadline": "", "priority_area": "", "priority_statement": "", "confidence": "HIGH/MEDIUM/LOW"},
+  "auditors": {
+    "return_margin_risk": {
+      "status": "APPLICABLE or NOT_APPLICABLE",
+      "not_applicable_reason": "",
+      "level": "LOW/MODERATE/HIGH",
+      "confidence": "HIGH/MEDIUM/LOW",
+      "headline": "",
+      "findings": [
+        {"title": "", "severity": "", "what_we_found": "",
+         "evidence": [{"observation": "", "location": "", "evidence_type": "DIRECT/TECHNICAL/EXTERNAL/INFERENCE", "confidence": "HIGH/MEDIUM/LOW", "reference_url": "", "reference_label": ""}],
+         "why_it_matters": "", "specific_fix": "", "what_we_cannot_know": ""}
+      ],
+      "priority_finding": "",
+      "masked_insight": ""
+    },
+    "purchase_decision_check": {
+      "level": "LOW/MODERATE/HIGH",
+      "confidence": "HIGH/MEDIUM/LOW",
+      "questions": [
+        {"question": "What is this?", "assessment": "CLEAR/PARTLY_CLEAR/UNCLEAR", "evidence": "", "gap": "", "specific_fix": "", "reference_url": "", "reference_label": ""},
+        {"question": "Is this for me?", "assessment": "", "evidence": "", "gap": "", "specific_fix": "", "reference_url": "", "reference_label": ""},
+        {"question": "Why should I choose this?", "assessment": "", "evidence": "", "gap": "", "specific_fix": "", "reference_url": "", "reference_label": ""},
+        {"question": "Can I believe it?", "assessment": "", "evidence": "", "gap": "", "specific_fix": "", "reference_url": "", "reference_label": ""},
+        {"question": "Is it worth the price?", "assessment": "", "evidence": "", "gap": "", "specific_fix": "", "reference_url": "", "reference_label": ""},
+        {"question": "What happens if I don't like it?", "assessment": "", "evidence": "", "gap": "", "specific_fix": "", "reference_url": "", "reference_label": ""}
+      ],
+      "biggest_friction": {"title": "", "what_customer_sees": "", "what_is_missing": "", "specific_fix": "", "reference_url": "", "reference_label": ""},
+      "masked_insight": ""
+    },
+    "ai_discovery_check": {
+      "level": "LOW/MODERATE/STRONG",
+      "confidence": "HIGH/MEDIUM/LOW",
+      "headline": "",
+      "brand_understanding": [{"text": "", "reference_label": "", "reference_url": ""}],
+      "product_understanding": [{"text": "", "reference_label": "", "reference_url": ""}],
+      "technical_findings": [{"text": "", "reference_label": "", "reference_url": ""}],
+      "external_footprint_findings": [{"text": "", "reference_label": "", "reference_url": ""}],
+      "specific_fixes": [{"text": "", "reference_label": "", "reference_url": ""}],
+      "what_we_cannot_know": "",
+      "masked_insight": ""
+    }
+  },
+  "overall": {"most_important_finding": "", "why_it_matters": "", "first_fix": "", "evidence_strength": "", "important_unknown": ""},
+  "clarigi_next_step": {
+    "headline": "There may be more behind this than the website shows.",
+    "body": "",
+    "questions_to_validate": [""],
+    "cta_text": "Get a free expert growth diagnostic",
+    "cta_url": "https://www.clarigi.com/contactus"
+  }
+}
+
+Keep every string concise and written for visual scanning (short sentences, concrete nouns, specific website elements — not essays). Do not include any text outside the JSON object.
+`.trim();
+}
+
+/* ============================================================
+   ANALYSIS FLOW
+   ============================================================ */
+function normalizeUrl(v){
+  v = v.trim();
+  if(!v) return null;
+  if(!/^https?:\/\//i.test(v)) v = "https://" + v;
+  try{ return new URL(v); }catch(e){ return null; }
+}
+
+let lastReportData = null; // populated in renderResults(); used by PDF/share buttons
+
+async function runAnalysis(){
+  const raw = document.getElementById("siteUrl").value;
+  const url = normalizeUrl(raw);
+  const errorBox = document.getElementById("errorBox");
+  errorBox.classList.remove("show");
+  errorBox.textContent = "";
+
+  if(!url){
+    errorBox.textContent = "That doesn't look like a valid site. Try something like yourbrand.com";
+    errorBox.classList.add("show");
+    return;
+  }
+
+  const btn = document.getElementById("analyzeBtn");
+  btn.disabled = true;
+  btn.textContent = "Analyzing…";
+  const statusPanel = document.getElementById("statusPanel");
+  statusPanel.classList.add("show");
+  const statusText = document.getElementById("statusText");
+  const messages = [
+    "Reading your homepage and product pages…",
+    "Checking return, COD and margin-risk signals…",
+    "Testing the six purchase-decision questions…",
+    "Checking search & AI discoverability signals…",
+    "Prioritizing the strongest external findings…"
+  ];
+  let mi = 0;
+  const statusTimer = setInterval(() => {
+    mi = (mi + 1) % messages.length;
+    statusText.textContent = messages[mi];
+  }, 2400);
+
+  document.getElementById("results").classList.remove("show");
+
+  try{
+    const data = await callGemini(url.href);
+    renderResults(url.hostname, data);
+    document.getElementById("results").classList.add("show");
+    document.getElementById("results").scrollIntoView({behavior:"smooth", block:"start"});
+  }catch(err){
+    errorBox.textContent = "We couldn't complete the analysis right now — our system is under heavy load. Please try again in a moment, or book a free call and we'll do this manually.";
+    errorBox.classList.add("show");
+  }finally{
+    clearInterval(statusTimer);
+    statusPanel.classList.remove("show");
+    btn.disabled = false;
+    btn.textContent = "Run my diagnostic";
+  }
+}
+
+async function callGemini(siteUrl){
+  const res = await fetch(WORKER_URL, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ siteUrl })
+  });
+  if(!res.ok){
+    const errBody = await res.json().catch(()=>({}));
+    throw new Error(errBody.error || "analysis service unavailable");
+  }
+  return await res.json();
+}
+
+/* ============================================================
+   PDF DOWNLOAD (native print-to-PDF — no canvas/rasterization)
+   ============================================================
+   Screenshot libraries (html2canvas/html2pdf) rasterize the page at a
+   guessed pixel width, then math-scale that bitmap onto PDF pages. That
+   guess is inherently fragile: it breaks differently on every device,
+   every content length, every brand's report. Real text also becomes a
+   blurry image.
+   The reliable fix is to let the BROWSER's own layout/pagination engine
+   produce the PDF, via window.print() + a dedicated @media print
+   stylesheet (see <style> block). This guarantees correct, non-overlapping
+   page breaks and crisp real text on any device, because it's the same
+   engine that already renders the page correctly on screen.
+   ============================================================ */
+function downloadPdf(){
+  const results = document.getElementById('results');
+  if(!results) return;
+  document.body.classList.add('pdf-print-mode');
+  const cleanup = () => document.body.classList.remove('pdf-print-mode');
+  window.addEventListener('afterprint', cleanup, { once: true });
+  // Safety net: some mobile browsers don't reliably fire afterprint
+  setTimeout(cleanup, 4000);
+  window.print();
+}
+
+async function shareReport(){
+  if(!lastReportData){ alert("Run a diagnostic first."); return; }
+  try{
+    const res = await fetch(WORKER_URL + "/save", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ report: lastReportData })
+    });
+    const data = await res.json();
+    if(data.shortUrl){
+      // Try native share sheet on mobile, fallback to prompt on desktop
+      if(navigator.share){
+        try{
+          await navigator.share({ title: "Clarigi Growth Diagnostic", url: data.shortUrl });
+          return;
+        }catch(e){ /* user cancelled share sheet, fall through to prompt */ }
+      }
+      prompt("Copy this shareable link:", data.shortUrl);
+    } else if(data.id){
+      // fallback if shortUrl wasn't returned for some reason
+      const link = "https://go.clarigi.com/r/" + data.id;
+      prompt("Copy this shareable link:", link);
+    } else {
+      alert("Could not create link right now.");
+    }
+  }catch(e){
+    alert("Could not create link right now.");
+  }
+}
+window.downloadPdf = downloadPdf;
+window.shareReport = shareReport;
+
+/* ============================================================
+   SMALL HELPERS
+   ============================================================ */
+function escapeHtml(str){
+  return String(str ?? "")
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function truncate(str, n){
+  str = String(str ?? "");
+  return str.length > n ? str.slice(0, n - 1).trim() + "…" : str;
+}
+function refLink(label, url){
+  if(!url) return "";
+  return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="ref-link">🔗 ${escapeHtml(label || "Verify this")}</a>`;
+}
+function scrollToCta(){
+  const el = document.getElementById("cta");
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+window.scrollToCta = scrollToCta;
+
+function maskedBox(text){
+  if(!text) return "";
+  return `
+    <div class="masked-box">
+      <span class="mi-icon">🔍</span>
+      <div class="mi-body">
+        <div class="mi-label">Worth validating on a call</div>
+        <p>${escapeHtml(text)}</p>
+        <a class="mi-cta" onclick="scrollToCta()">See how we'd validate this →</a>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   DIAGRAMS
+   ============================================================ */
+function levelScore(level){
+  if(level === "HIGH") return 0;
+  if(level === "MODERATE") return 1;
+  return 2; // LOW / STRONG / default
+}
+function levelColorVar(level){
+  if(level === "HIGH") return "var(--bad)";
+  if(level === "MODERATE") return "var(--warn)";
+  return "var(--good)";
+}
+
+function riskFlowSvg(level, riskLabel){
+  const color = levelColorVar(level);
+  const steps = [
+    ["Order placed", "var(--midnight-70)"],
+    ["Delivery attempt", "var(--midnight-70)"],
+    [riskLabel || "Risk factor", color],
+    ["Return initiated", "var(--midnight-70)"],
+    ["Margin impact", color]
+  ];
+  const boxW = 140, boxH = 52, gap = 26, startX = 10, y = 20;
+  let svg = `<svg viewBox="0 0 ${steps.length*(boxW+gap)-gap+20} 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Return risk flow">`;
+  steps.forEach((s, i) => {
+    const x = startX + i*(boxW+gap);
+    svg += `<rect x="${x}" y="${y}" width="${boxW}" height="${boxH}" rx="8" fill="white" stroke="${s[1]}" stroke-width="2"></rect>`;
+    svg += `<foreignObject x="${x+6}" y="${y+6}" width="${boxW-12}" height="${boxH-12}">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:11px;font-weight:bold;color:${s[1]==="var(--midnight-70)"?"#0B1957":s[1]};text-align:center;display:flex;align-items:center;justify-content:center;height:100%;line-height:1.3;">${escapeHtml(s[0])}</div>
+    </foreignObject>`;
+    if(i < steps.length - 1){
+      const ax = x + boxW;
+      svg += `<line x1="${ax+2}" y1="${y+boxH/2}" x2="${ax+gap-2}" y2="${y+boxH/2}" stroke="#8FA0D8" stroke-width="2" marker-end="url(#arrow)"></line>`;
+    }
+  });
+  svg += `<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8FA0D8"></path></marker></defs>`;
+  svg += `</svg>`;
+  return svg;
+}
+
+function wrapSvgText(text, maxChars){
+  const words = String(text || "").split(/\s+/);
+  const lines = [];
+  let cur = "";
+  words.forEach(w => {
+    const test = cur ? cur + " " + w : w;
+    if(test.length > maxChars && cur){ lines.push(cur); cur = w; }
+    else cur = test;
+  });
+  if(cur) lines.push(cur);
+  return lines.slice(0, 2); // cap at 2 lines, safe for fixed-height rows
+}
+
+function priorityPyramidSvg(overall, findingCount){
+  if(!overall || !overall.most_important_finding) return "";
+  const otherCount = Math.max(findingCount - 1, 0);
+  const rows = [
+    { label: "Fix first", detail: overall.most_important_finding, fill: "#0B1957", textFill: "#FFFFFF" },
+    { label: "Other flagged findings", detail: `${otherCount} additional finding${otherCount===1?"":"s"} across the audit`, fill: "#8FA0D8", textFill: "#0B1957" },
+    { label: "Full external scan", detail: "3 auditors · full public-site review", fill: "#E9F3FF", textFill: "#0B1957" }
+  ];
+  const width = 640, rowH = 64, gap = 10, padX = 24;
+  // Small decorative triangle marker (fixed 40x40 size — a scaled-down
+  // echo of the original pyramid icon, not a full-width diagram) sits to
+  // the left of the "Fix first" row only.
+  const triSize = 40, triGap = 14;
+  const contentX = triSize + triGap;
+  const totalH = rows.length * (rowH + gap) - gap;
+  let svg = `<svg viewBox="0 0 ${width} ${totalH}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Priority stack">`;
+  rows.forEach((r, i) => {
+    const y = i * (rowH + gap);
+    const isFirst = i === 0;
+    const rowX = isFirst ? contentX : 0;
+    const w = width - rowX - i * 24; // narrows each subsequent row slightly, without going off-canvas
+    svg += `<rect x="${rowX}" y="${y}" width="${w}" height="${rowH}" rx="10" fill="${r.fill}" stroke="${r.fill==='#E9F3FF' ? '#8FA0D8' : 'none'}" stroke-width="1"></rect>`;
+    if(isFirst){
+      const triY = y + (rowH - triSize) / 2;
+      svg += `<polygon points="${triSize/2},${triY} ${triSize},${triY+triSize} 0,${triY+triSize}" fill="#8FA0D8"></polygon>`;
+    }
+    const labelLines = wrapSvgText(r.label, 30);
+    const detailLines = wrapSvgText(r.detail, 46);
+    let ty = y + 24;
+    labelLines.forEach(line => {
+      svg += `<text x="${rowX+padX}" y="${ty}" font-family="Arial" font-size="13" font-weight="bold" fill="${r.textFill}">${escapeHtml(line)}</text>`;
+      ty += 16;
+    });
+    ty += 2;
+    detailLines.forEach(line => {
+      svg += `<text x="${rowX+padX}" y="${ty}" font-family="Arial" font-size="11" fill="${r.textFill}" opacity="0.8">${escapeHtml(line)}</text>`;
+      ty += 14;
+    });
+  });
+  svg += `</svg>`;
+  return svg;
+}
+
+function purchaseVennSvg(questions){
+  questions = questions || [];
+  const score = q => q ? (q.assessment === "CLEAR" ? 2 : q.assessment === "PARTLY_CLEAR" ? 1 : 0) : 1;
+  const clarityQs = [questions[0], questions[1], questions[2]];
+  const trustQs = [questions[3]];
+  const valueQs = [questions[4], questions[5]];
+  const avg = arr => arr.reduce((a,q)=>a+score(q),0) / arr.length;
+  const colorFor = v => v >= 1.5 ? "#2E7D5B" : v >= 0.8 ? "#9a5b00" : "#B5424A";
+  const cClarity = colorFor(avg(clarityQs));
+  const cTrust = colorFor(avg(trustQs));
+  const cValue = colorFor(avg(valueQs));
+  // Smaller, fully-contained radius (78 vs the old 105) with generous
+  // viewBox padding so the circles never touch — let alone clip past —
+  // the canvas edge, on any device.
+  return `
+  <svg viewBox="0 0 340 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Purchase decision Venn diagram">
+    <circle cx="150" cy="125" r="78" fill="${cClarity}" fill-opacity="0.42" stroke="${cClarity}" stroke-width="1.5"></circle>
+    <circle cx="230" cy="125" r="78" fill="${cTrust}" fill-opacity="0.42" stroke="${cTrust}" stroke-width="1.5"></circle>
+    <circle cx="190" cy="205" r="78" fill="${cValue}" fill-opacity="0.42" stroke="${cValue}" stroke-width="1.5"></circle>
+    <text x="95" y="95" font-family="Arial" font-size="12" font-weight="bold" fill="#0B1957">Clarity</text>
+    <text x="285" y="95" font-family="Arial" font-size="12" font-weight="bold" fill="#0B1957" text-anchor="end">Trust</text>
+    <text x="190" y="278" font-family="Arial" font-size="12" font-weight="bold" fill="#0B1957" text-anchor="middle">Value &amp; support</text>
+    <text x="190" y="165" font-family="Arial" font-size="10.5" font-weight="bold" fill="#0B1957" text-anchor="middle">Confident</text>
+    <text x="190" y="178" font-family="Arial" font-size="10.5" font-weight="bold" fill="#0B1957" text-anchor="middle">purchase</text>
+  </svg>`;
+}
+
+function aiMindMapSvg(brandName, layers){
+  // Compact 3-column card layout instead of a radiating mind map — fixed
+  // canvas size, fixed row heights, no angle math, so it can never overflow
+  // a printed page or run off the edge on narrow viewports.
+  const columns = [
+    { label: "Brand understanding", items: (layers.brand || []).slice(0, 2), fill: "#0B1957" },
+    { label: "Product understanding", items: (layers.product || []).slice(0, 2), fill: "#16226e" },
+    { label: "Technical structure", items: (layers.technical || []).slice(0, 2), fill: "#2c3a8a" }
+  ];
+  const width = 640, colW = 200, gapX = 20, headH = 40, itemH = 54, topPad = 8;
+  const height = topPad + headH + columns.reduce((m,c) => Math.max(m, c.items.length), 1) * itemH + 16;
+  let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI discovery summary">`;
+  svg += `<text x="${width/2}" y="18" font-family="Arial" font-size="12" font-weight="bold" fill="#0B1957" text-anchor="middle">${escapeHtml(truncate(brandName || "This brand", 40))}</text>`;
+
+  columns.forEach((col, ci) => {
+    const x = ci * (colW + gapX);
+    const headY = topPad + 14;
+    svg += `<rect x="${x}" y="${topPad}" width="${colW}" height="${headH}" rx="8" fill="${col.fill}"></rect>`;
+    const headLines = wrapSvgText(col.label, 22);
+    let hy = headLines.length > 1 ? headY - 6 : headY + 2;
+    headLines.forEach(line => {
+      svg += `<text x="${x + colW/2}" y="${hy}" font-family="Arial" font-size="11.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">${escapeHtml(line)}</text>`;
+      hy += 14;
+    });
+
+    let y = topPad + headH + 10;
+    const items = col.items.length ? col.items : [{ text: "Not enough public information to assess." }];
+    items.forEach(it => {
+      const lines = wrapSvgText((it && it.text) || "", 26);
+      svg += `<rect x="${x}" y="${y}" width="${colW}" height="${itemH - 8}" rx="7" fill="#E9F3FF"></rect>`;
+      let ly = y + 18;
+      lines.forEach(line => {
+        svg += `<text x="${x + 10}" y="${ly}" font-family="Arial" font-size="10.5" fill="#0B1957" opacity="0.9">${escapeHtml(line)}</text>`;
+        ly += 13;
+      });
+      y += itemH;
+    });
+  });
+  svg += `</svg>`;
+  return svg;
+}
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+function renderResults(domain, data){
+  lastReportData = data;
+
+  const business = data.business || {};
+  const summary = data.diagnostic_summary || {};
+  const auditors = data.auditors || {};
+  const overall = data.overall || {};
+  const next = data.clarigi_next_step || {};
+
+  document.getElementById("brandPill").textContent = business.name || domain;
+  document.getElementById("catLine").textContent = [business.category, business.business_model].filter(Boolean).join(" · ");
+  document.getElementById("headline").textContent = summary.headline || "Here's what we found";
+  document.getElementById("subheadline").textContent = summary.subheadline || "";
+
+  // Priority pyramid
+  const totalFindings =
+    ((auditors.return_margin_risk && auditors.return_margin_risk.findings) || []).length +
+    (auditors.purchase_decision_check && auditors.purchase_decision_check.biggest_friction ? 1 : 0) +
+    ((auditors.ai_discovery_check && auditors.ai_discovery_check.specific_fixes) || []).length;
+  const pyramidWrap = document.getElementById("priorityPyramidWrap");
+  const pyramidSvg = priorityPyramidSvg(overall, totalFindings || 1);
+  pyramidWrap.innerHTML = pyramidSvg ? pyramidSvg + `<div class="diagram-caption">How this audit's findings stack up by priority</div>` : "";
+
+  // Priority banner
+  const pb = document.getElementById("priorityBanner");
+  if(summary.priority_statement){
+    pb.style.display = "block";
+    document.getElementById("priorityArea").textContent = summary.priority_area || "Priority area";
+    document.getElementById("priorityStatement").textContent = summary.priority_statement;
+    const grid = document.getElementById("priorityGrid");
+    grid.innerHTML = "";
+    if(overall.first_fix) grid.appendChild(prioritySub("What we'd fix first", overall.first_fix));
+    if(overall.important_unknown) grid.appendChild(prioritySub("What we can't know from outside", overall.important_unknown));
+  } else {
+    pb.style.display = "none";
+  }
+
+  // Auditor cards
+  const wrap = document.getElementById("auditorCards");
+  wrap.innerHTML = "";
+  wrap.appendChild(renderReturnMarginCard(auditors.return_margin_risk));
+  wrap.appendChild(renderPurchaseDecisionCard(auditors.purchase_decision_check));
+  wrap.appendChild(renderAiDiscoveryCard(auditors.ai_discovery_check, business.name || domain));
+
+  // Overall card
+  const overallCard = document.getElementById("overallCard");
+  if(overall.most_important_finding){
+    overallCard.style.display = "block";
+    overallCard.innerHTML = `
+      <h3>The one thing we'd fix first</h3>
+      <div class="overall-row"><strong>Most important finding</strong>${escapeHtml(overall.most_important_finding)}</div>
+      <div class="overall-row"><strong>Why it matters</strong>${escapeHtml(overall.why_it_matters || "")}</div>
+      <div class="overall-row"><strong>First fix</strong>${escapeHtml(overall.first_fix || "")}</div>
+      <div class="overall-row"><strong>Evidence strength</strong>${escapeHtml(overall.evidence_strength || "")}</div>
+      <div class="unknown-box"><strong>What we can't know from outside</strong>${escapeHtml(overall.important_unknown || "")}</div>
+    `;
+  } else {
+    overallCard.style.display = "none";
+  }
+
+  // CTA
+  document.getElementById("ctaHeadline").textContent = next.headline || "There may be more behind this than the website shows.";
+  document.getElementById("ctaBody").textContent = next.body || "Our team can validate these external findings against your actual growth data.";
+  const qWrap = document.getElementById("ctaQuestions");
+  qWrap.innerHTML = "";
+  (next.questions_to_validate || []).forEach(q => {
+    const chip = document.createElement("div");
+    chip.className = "cta-chip";
+    chip.innerHTML = `<span class="chip-mark">?</span>${escapeHtml(q)}`;
+    qWrap.appendChild(chip);
+  });
+  const ctaBtn = document.getElementById("ctaButton");
+  ctaBtn.textContent = (next.cta_text || "Get a free expert growth diagnostic") + " →";
+  ctaBtn.href = next.cta_url || "https://www.clarigi.com/contactus";
+}
+
+function prioritySub(title, body){
+  const div = document.createElement("div");
+  div.className = "priority-sub";
+  div.innerHTML = `<h5>${escapeHtml(title)}</h5><p>${escapeHtml(body)}</p>`;
+  return div;
+}
+
+function levelBadge(level){
+  if(!level) return "";
+  return `<span class="level-badge level-${escapeHtml(level)}">${escapeHtml(level)}</span>`;
+}
+function confidenceBadge(conf){
+  if(!conf) return "";
+  return `<span class="confidence-badge">Confidence: ${escapeHtml(conf)}</span>`;
+}
+
+function renderFinding(f){
+  const div = document.createElement("div");
+  div.className = "finding";
+  const evItems = (f.evidence || []).map(e => `
+    <div class="ev-item">
+      ${escapeHtml(e.observation || "")}
+      <span class="ev-meta">${escapeHtml(e.location || "")}${e.location && e.evidence_type ? " · " : ""}${escapeHtml(e.evidence_type || "")}${e.confidence ? " · confidence: " + escapeHtml(e.confidence) : ""}</span>
+      ${refLink(e.reference_label, e.reference_url)}
+    </div>
+  `).join("");
+  div.innerHTML = `
+    <div class="finding-top">
+      <h4>${escapeHtml(f.title || "")}</h4>
+      ${f.severity ? `<span class="sev-badge">${escapeHtml(f.severity)}</span>` : ""}
+    </div>
+    <p class="what">${escapeHtml(f.what_we_found || "")}</p>
+    ${evItems ? `<p class="ev-label">Evidence</p>${evItems}` : ""}
+    ${f.why_it_matters ? `<div class="why-box"><strong>Why it matters</strong>${escapeHtml(f.why_it_matters)}</div>` : ""}
+    ${f.specific_fix ? `<div class="fix-box"><strong>Specific fix</strong>${escapeHtml(f.specific_fix)}</div>` : ""}
+    ${f.what_we_cannot_know ? `<div class="unknown-box"><strong>What we cannot know</strong>${escapeHtml(f.what_we_cannot_know)}</div>` : ""}
+  `;
+  return div;
+}
+
+function renderReturnMarginCard(a){
+  const card = document.createElement("div");
+  card.className = "card pdf-page-safe";
+  a = a || {};
+  if(a.status === "NOT_APPLICABLE"){
+    card.innerHTML = `
+      <div class="auditor-head">
+        <h3>Return &amp; Margin Risk</h3>
+        <div class="tag-row"><span class="status-badge">Not applicable</span></div>
+      </div>
+      <p class="card-sub">Return, COD and reverse-logistics exposure for physical products.</p>
+      <div class="not-applicable">${escapeHtml(a.not_applicable_reason || "Not materially relevant to this business model.")}</div>
+    `;
+    return card;
+  }
+  const riskLabel = a.findings && a.findings[0] ? truncate(a.findings[0].title, 22) : "Risk factor";
+  card.innerHTML = `
+    <div class="auditor-head">
+      <h3>Return &amp; Margin Risk</h3>
+      <div class="tag-row">${levelBadge(a.level)}${confidenceBadge(a.confidence)}</div>
+    </div>
+    <p class="card-sub">${escapeHtml(a.headline || "Externally visible factors that can increase return, RTO or margin exposure.")}</p>
+    <div class="diagram-wrap">${riskFlowSvg(a.level, riskLabel)}<div class="diagram-caption">Where this risk sits in the order-to-return path</div></div>
+  `;
+  const findingsWrap = document.createElement("div");
+  (a.findings || []).forEach(f => findingsWrap.appendChild(renderFinding(f)));
+  card.appendChild(findingsWrap);
+  if(a.priority_finding){
+    const tag = document.createElement("div");
+    tag.className = "priority-finding-tag";
+    tag.textContent = "Priority: " + a.priority_finding;
+    card.appendChild(tag);
+  }
+  const mb = document.createElement("div");
+  mb.innerHTML = maskedBox(a.masked_insight);
+  if(mb.firstElementChild) card.appendChild(mb.firstElementChild);
+  return card;
+}
+
+function renderPurchaseDecisionCard(p){
+  const card = document.createElement("div");
+  card.className = "card pdf-page-safe";
+  p = p || {};
+  card.innerHTML = `
+    <div class="auditor-head">
+      <h3>Purchase Decision Check</h3>
+      <div class="tag-row">${levelBadge(p.level)}${confidenceBadge(p.confidence)}</div>
+    </div>
+    <p class="card-sub">Can a prospective customer confidently decide to buy from this site?</p>
+    <div class="diagram-wrap diagram-wrap--compact">${purchaseVennSvg(p.questions)}<div class="diagram-caption">Where the six questions overlap into a confident purchase</div></div>
+  `;
+  const qWrap = document.createElement("div");
+  (p.questions || []).forEach(q => {
+    const row = document.createElement("div");
+    row.className = "question-row";
+    const assessClass = "assess-" + (q.assessment || "").replace(/\s+/g,"_");
+    row.innerHTML = `
+      <div class="q-top">
+        <h5>${escapeHtml(q.question || "")}</h5>
+        ${q.assessment ? `<span class="assess-badge ${assessClass}">${escapeHtml(q.assessment.replace(/_/g," "))}</span>` : ""}
+      </div>
+      ${q.evidence ? `<div class="q-detail"><strong>What the site shows:</strong> ${escapeHtml(q.evidence)}</div>` : ""}
+      ${q.gap ? `<div class="q-detail"><strong>Gap:</strong> ${escapeHtml(q.gap)}</div>` : ""}
+      ${q.specific_fix ? `<div class="q-detail"><strong>Fix:</strong> ${escapeHtml(q.specific_fix)}</div>` : ""}
+      ${refLink(q.reference_label, q.reference_url)}
+    `;
+    qWrap.appendChild(row);
+  });
+  card.appendChild(qWrap);
+
+  const bf = p.biggest_friction;
+  if(bf && bf.title){
+    const bfDiv = document.createElement("div");
+    bfDiv.className = "biggest-friction";
+    bfDiv.innerHTML = `
+      <h4>Biggest decision friction: ${escapeHtml(bf.title)}</h4>
+      <div class="bf-row"><strong>What the customer currently sees</strong>${escapeHtml(bf.what_customer_sees || "")}</div>
+      <div class="bf-row"><strong>What's missing</strong>${escapeHtml(bf.what_is_missing || "")}</div>
+      <div class="bf-row"><strong>Specific fix</strong>${escapeHtml(bf.specific_fix || "")}</div>
+      ${refLink(bf.reference_label, bf.reference_url)}
+    `;
+    card.appendChild(bfDiv);
+  }
+  const mb = document.createElement("div");
+  mb.innerHTML = maskedBox(p.masked_insight);
+  if(mb.firstElementChild) card.appendChild(mb.firstElementChild);
+  return card;
+}
+
+function renderAiDiscoveryCard(d, brandName){
+  const card = document.createElement("div");
+  card.className = "card pdf-page-safe";
+  d = d || {};
+  card.innerHTML = `
+    <div class="auditor-head">
+      <h3>AI &amp; Search Discovery Check</h3>
+      <div class="tag-row">${levelBadge(d.level)}${confidenceBadge(d.confidence)}</div>
+    </div>
+    <p class="card-sub">${escapeHtml(d.headline || "How clearly search and AI systems can understand this brand and its offer.")}</p>
+    <div class="diagram-wrap">${aiMindMapSvg(brandName, {brand:d.brand_understanding, product:d.product_understanding, technical:d.technical_findings})}<div class="diagram-caption">How the brand's public information maps for search &amp; AI systems</div></div>
+  `;
+  card.appendChild(listGroup("What search/AI can understand", (d.brand_understanding || []).concat(d.product_understanding || [])));
+  card.appendChild(listGroup("What's weak or missing", (d.technical_findings || [])));
+  if((d.external_footprint_findings || []).length){
+    card.appendChild(listGroup("External footprint", d.external_footprint_findings));
+  }
+  if((d.specific_fixes || []).length){
+    const fixWrap = document.createElement("div");
+    fixWrap.className = "list-group";
+    fixWrap.innerHTML = `<h5>Exact fixes</h5>`;
+    d.specific_fixes.forEach(fx => {
+      const box = document.createElement("div");
+      box.className = "fix-box";
+      box.style.marginTop = "8px";
+      box.innerHTML = `${escapeHtml(fx.text || fx)}${refLink(fx.reference_label, fx.reference_url)}`;
+      fixWrap.appendChild(box);
+    });
+    card.appendChild(fixWrap);
+  }
+  if(d.what_we_cannot_know){
+    const unk = document.createElement("div");
+    unk.className = "unknown-box";
+    unk.innerHTML = `<strong>What we cannot know</strong>${escapeHtml(d.what_we_cannot_know)}`;
+    card.appendChild(unk);
+  }
+  const mb = document.createElement("div");
+  mb.innerHTML = maskedBox(d.masked_insight);
+  if(mb.firstElementChild) card.appendChild(mb.firstElementChild);
+  return card;
+}
+
+function listGroup(title, items){
+  const div = document.createElement("div");
+  div.className = "list-group";
+  const lis = (items || []).filter(Boolean).map(i => `
+    <div class="lg-item">${escapeHtml(i.text || i)}${refLink(i.reference_label, i.reference_url)}</div>
+  `).join("");
+  div.innerHTML = `<h5>${escapeHtml(title)}</h5>${lis}`;
+  return div;
+}
+
+document.getElementById("siteUrl").addEventListener("keydown", (e) => {
+  if(e.key === "Enter") runAnalysis();
+});
+
+/* ============================================================
+   AUTO-LOAD A SHARED REPORT VIA ?report=ID
+   ============================================================ */
+(async function checkForSharedReport(){
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("report");
+  if(!id) return;
+  try{
+    const res = await fetch(WORKER_URL + "/report?id=" + encodeURIComponent(id));
+    if(!res.ok) return;
+    const data = await res.json();
+    renderResults(data?.business?.name || "shared-report", data);
+    document.getElementById("results").classList.add("show");
+  }catch(e){ /* ignore */ }
+})();
+</script>
+</body>
+</html>
+
