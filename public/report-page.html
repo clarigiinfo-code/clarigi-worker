@@ -240,6 +240,34 @@ footer.foot{background:var(--midnight);color:var(--bridal);text-align:center;pad
 }
 body.pdf-print-mode .report-toolbar,body.pdf-print-mode .hero,body.pdf-print-mode footer.foot{display:none !important;}
 body.pdf-print-mode section#results{display:block !important;}
+
+/* VERSION B — "Executive Briefing": navy section bands, sans-serif, tinted evidence panels */
+:root{--radius:6px;--page:#E9F3FF;}
+.hero{background:linear-gradient(180deg,#fff 0%,var(--bridal) 100%);}
+.result-header{background:var(--midnight);color:#fff;border-radius:6px;padding:28px 30px;margin-bottom:0;}
+.result-header h2{color:#fff;font-size:29px;}
+.result-header p{color:#dbe6ff;}
+.cat-line{color:#c4d0f5;}
+.brand-pill{background:var(--vista);color:var(--midnight);}
+.ref-note{margin-top:14px;}
+.card{padding:var(--pad);overflow:hidden;border-color:var(--midnight-12);counter-increment:aud;}
+#auditorCards{counter-reset:aud;}
+.auditor-head{background:var(--midnight);margin:calc(var(--pad) * -1) calc(var(--pad) * -1) 16px;padding:16px var(--pad);align-items:center;}
+.auditor-head h3{color:#fff;font-size:18px;}
+.auditor-head h3::before{content:counter(aud);display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--vista);color:var(--midnight);font-size:13px;margin-right:10px;vertical-align:1px;}
+.finding{background:#fbfdff;border-left-width:5px;border-left-color:var(--vista);}
+.ev-item{background:var(--bridal);}
+.fix-box{background:#e6f4ea;}
+.why-box{background:var(--warn-bg);padding:10px 14px;border-left-width:4px;border-radius:5px;}
+.question-row{background:#fbfdff;}
+.q-grid .question-row{border-top:3px solid var(--vista);}
+.priority-banner{border-radius:6px;}
+.overall-card{border-width:0;border-left:8px solid var(--midnight);background:#fff;box-shadow:0 0 0 1px var(--midnight-12);}
+.cta-section{border-radius:6px;}
+.cta-head h2{font-size:27px;}
+@media (max-width:640px){.result-header{padding:20px 18px;}.result-header h2{font-size:22px;}}
+@media print{.card{padding:16pt;}.auditor-head{margin:-16pt -16pt 12pt;}.result-header{padding:16pt 18pt;break-inside:avoid;}.result-header h2{font-size:19pt;}}
+
 </style>
 </head>
 <body>
